@@ -2,11 +2,15 @@ import arcpy
 import json
 import os
 from py2neo import Graph
+from ast import literal_eval
 
 def main():
 
-    output_workspace = arcpy.GetParameterAsText(0)
+    graph_connection = arcpy.GetParameterAsText(0)
+    output_workspace = arcpy.GetParameterAsText(1)
     desc = arcpy.Describe(output_workspace)
+    gc_tuple = literal_eval(graph_connection)
+    arcpy.AddMessage(type(gc_tuple))
 
     base_cypher = "START source=node(*) MATCH (source)-[r]->(target) RETURN source,r.airline,target;"
 
@@ -49,7 +53,7 @@ def main():
     node_rows = []
     edge_rows = []
 
-    g = Graph("bolt://localhost:7687", auth=("neo4j", "gis12345"))
+    g = Graph(gc_tuple[0], auth=(gc_tuple[1], gc_tuple[2]))
     arcpy.AddMessage("Successfully connected to Graph!")
 
     results = g.run(base_cypher).data()
