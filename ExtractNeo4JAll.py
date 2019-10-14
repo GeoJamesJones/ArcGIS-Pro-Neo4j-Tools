@@ -10,7 +10,6 @@ def main():
     output_workspace = arcpy.GetParameterAsText(1)
     desc = arcpy.Describe(output_workspace)
     gc_tuple = literal_eval(graph_connection)
-    arcpy.AddMessage(type(gc_tuple))
 
     base_cypher = "START source=node(*) MATCH (source)-[r]->(target) RETURN source,r.airline,target;"
 
